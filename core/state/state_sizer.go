@@ -344,12 +344,12 @@ func (t *SizeTracker) run() {
 			// Publish statistics to metric system
 			stat.publish()
 
-			// Evict the stale statistics
-			heap.Push(&h, stats[u.root])
-			for u.blockNumber-h[0].BlockNumber > statEvictThreshold {
-				delete(stats, h[0].StateRoot)
-				heap.Pop(&h)
-			}
+		// Evict the stale statistics
+		heap.Push(&h, stats[u.root])
+		for len(h) > 0 && u.blockNumber-h[0].BlockNumber > statEvictThreshold {
+			delete(stats, h[0].StateRoot)
+			heap.Pop(&h)
+		}
 			log.Debug("Update state size", "number", stat.BlockNumber, "root", stat.StateRoot, "stat", stat)
 
 		case r := <-t.queryCh:
